@@ -1,95 +1,117 @@
-"use client"
-import { useState, useEffect } from 'react';
-import { db } from '@/utils/db';
-import { AIOutput } from '@/utils/schema';
-
+"use client";
+import { useState, useEffect } from "react";
+import { db } from "@/utils/db";
+import { AIOutput } from "@/utils/schema";
+import { eq } from "drizzle-orm";
+import { useUser } from "@clerk/clerk-react";
 
 export interface HISTORY {
-    id: number;
-    formData: string;
-    aiResponse: string | null;
-    templateSlug: string;
-    createdBy: string;
-    createdAt: string | null; 
+  id: number;
+  formData: string; 
+  aiResponse: string | null;
+  templateSlug: string;
+  createdBy: string;
+  createdAt: string | null;
 }
 
 const History = () => {
-    const [history, setHistory] = useState<HISTORY[]>([]);
-    const [loading, setLoading] = useState(false);
+  const [history, setHistory] = useState<HISTORY[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { user } = useUser(); 
 
-    const fetchHistory = async () => {
-        try {
-            setLoading(true);
-            // Fetch data from the database
-            const data = await db
-                .select()
-                .from(AIOutput)
-                .orderBy(AIOutput.createdAt); 
-            setHistory(data);
-        } catch (error) {
-            console.error("Error fetching history:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+  const fetchHistory = async () => {
+    try {
+      setLoading(true);
 
+      if (user) {
+        const userEmail = user.primaryEmailAddress?.emailAddress;
 
-    useEffect(() => {
-        fetchHistory();
-    }, []);
+        const data = await db
+          .select()
+          .from(AIOutput)
+          .where(eq(AIOutput.createdBy, userEmail!))
+          .orderBy(AIOutput.createdAt);
 
-   
-    const handleCopy = (text: string) => {
-        navigator.clipboard.writeText(text)
-            .then(() => {
-                alert("Copied to clipboard!"); 
-            })
-            .catch(err => {
-                console.error("Failed to copy text: ", err);
-            });
-    };
+        setHistory(data);
+      }
+    } catch (error) {
+      console.error("Error fetching history:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return (
-        <div className="p-4 md:p-6 lg:p-8 bg-slate-100">
-            {loading ? (
-                <p className="text-center text-gray-600">Loading...</p>
-            ) : (
-                <div className="space-y-4">
-                    {history.map((item) => (
-                        <div
-                            key={item.id}
-                            className="border rounded-lg p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
-                        >
-                            <div className="col-span-1">
-                                <p className="font-semibold">Template:</p>
-                                <p className="text-gray-700">{item.templateSlug}</p>
-                            </div>
-                            <div className="col-span-1">
-                                <p className="font-semibold">AI Response:</p>
-                                <p className="text-gray-700">{item.aiResponse || 'No response'}</p>
-                            </div>
-                            <div className="col-span-1">
-                                <p className="font-semibold">Date:</p>
-                                <p className="text-gray-700">{item.createdAt || 'No date'}</p>
-                            </div>
-                            <div className="col-span-1 flex items-center space-x-2">
-                                <p className="font-semibold">Words:</p>
-                                <p className="text-gray-700">{item.aiResponse ? item.aiResponse.split(' ').length : 0}</p>
-                            </div>
-                            <div className="col-span-1 flex items-center">
-                                <button
-                                    className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-                                    onClick={() => handleCopy(item.aiResponse || '')}
-                                >
-                                    Copy
-                                </button>
-                            </div>
-                        </div>
-                    ))}
+  useEffect(() => {
+    fetchHistory();
+  }, [user]);
+
+  const handleCopy = (text: string) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        alert("Copied to clipboard!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy text: ", err);
+      });
+  };
+
+  return (
+    <div className="p-4 md:p-6 lg:p-8 bg-slate-100">
+      <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+        Your AI History
+      </h1>
+      {loading ? (
+        <p className="text-center text-gray-600">Loading...</p>
+      ) : (
+        <div className="space-y-4">
+          {history.map((item) => {
+            let questionData = { title: "", description: "", content: "" };
+            try {
+              questionData = JSON.parse(item.formData);
+            } catch (e) {
+              console.error("Error parsing formData:", e);
+            }
+
+            return (
+              <div
+                key={item.id}
+                className="border rounded-lg p-4 grid grid-cols-1 md:grid-cols-3 gap-4 bg-white"
+              >
+                <div className="flex flex-col">
+                  <p className="font-semibold text-lg">Title:</p>
+                  <p className="text-gray-700">{questionData.title || "No title"}</p>
+                  
+                  <p className="font-semibold mt-2">Description:</p>
+                  <p className="text-gray-700">{questionData.description || "No description"}</p>
                 </div>
-            )}
+
+                <div className="flex justify-center items-center text-center">
+                  <div>
+                    <p className="font-semibold text-lg">AI Response:</p>
+                    <p className="text-gray-700">{item.aiResponse || "No response"}</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-end justify-between">
+                  <div>
+                    <p className="font-semibold">Date:</p>
+                    <p className="text-gray-700">{item.createdAt || "No date"}</p>
+                  </div>
+                  <button
+                    className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mt-4"
+                    onClick={() => handleCopy(item.aiResponse || "")}
+                  >
+                    Copy
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
-    );
+      )}
+    </div>
+  );
 };
 
 export default History;

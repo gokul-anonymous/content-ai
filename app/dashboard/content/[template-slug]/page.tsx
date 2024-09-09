@@ -54,7 +54,6 @@ function CreateNewContent(props: PROPS) {
             setAiOutput(aiResponse);
             setUpdateCreditUsage(Date.now())
 
-            // Ensure aiResponse is not undefined and call SaveInDb
             if (aiResponse && selectedTemplate?.slug && user?.primaryEmailAddress?.emailAddress) {
                 await SaveInDb(form, selectedTemplate.slug, aiResponse);
             }
@@ -67,15 +66,14 @@ function CreateNewContent(props: PROPS) {
 
     const SaveInDb = async (formData: any, slug: string, aiResponse: string) => {
         try {
-            // Ensure createdBy has a fallback value in case it's undefined
             const createdBy = user?.primaryEmailAddress?.emailAddress || "unknown";
 
             const result = await db.insert(AIOutput).values({
-                formData: JSON.stringify(formData), // Ensure formData is serialized to a string
+                formData: JSON.stringify(formData),
                 templateSlug: slug,
                 aiResponse: aiResponse,
                 createdBy: createdBy,
-                createdAt: moment().format('DD/MM/YYYY'), // Correct date format
+                createdAt: moment().format('DD/MM/YYYY'), 
             });
             console.log(result);
         } catch (error) {
@@ -89,7 +87,6 @@ function CreateNewContent(props: PROPS) {
                 <Button><ArrowLeft /> Back</Button>
             </Link>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 py-5">
-                {/* Form Section */}
                 <div className="lg:col-span-1">
                     <FormSection
                         selectedTemplate={selectedTemplate}
@@ -98,7 +95,6 @@ function CreateNewContent(props: PROPS) {
                     />
                 </div>
 
-                {/* Output Section */}
                 <div className="lg:col-span-2">
                     <OutputSection aiOutput={aiOutput} />
                 </div>
