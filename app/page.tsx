@@ -4,10 +4,10 @@ import Link from 'next/link';
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-between bg-gray-50">
-      {/* Navbar */}
+
       <nav className="w-full flex items-center justify-between px-6 py-4 bg-white shadow-md">
         <div className="flex items-center">
-          {/* Logo */}
+
           <Image
             src="/logo.jpg"
             alt="Logo"
@@ -21,9 +21,8 @@ export default function Home() {
         </Link>
       </nav>
 
-      {/* Main Container to center the Hero Section */}
       <div className="flex flex-grow flex-col items-center justify-center text-center px-6 py-10">
-        {/* Main Hero Section */}
+
         <p className="bg-blue-50 px-4 py-1 rounded-full text-sm font-medium text-blue-700 mb-4">
           ROT HACKERS
         </p>
@@ -38,10 +37,10 @@ export default function Home() {
         </Link>
       </div>
 
-      {/* Features Section */}
+
       <section className="w-full py-12 md:py-16 bg-white">
         <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 px-6">
-          {/* Feature 1 */}
+
           <div className="flex flex-col items-center">
             <Image
               src="https://cdn-icons-png.flaticon.com/512/4568/4568920.png"
@@ -56,7 +55,6 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Feature 2 */}
           <div className="flex flex-col items-center">
             <Image
               src="https://cdn-icons-png.flaticon.com/512/3384/3384799.png"
@@ -71,7 +69,6 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Feature 3 */}
           <div className="flex flex-col items-center">
             <Image
               src="https://cdn-icons-png.flaticon.com/512/1055/1055646.png"
@@ -86,7 +83,7 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Feature 4 */}
+
           <div className="flex flex-col items-center">
             <Image
               src="https://cdn-icons-png.flaticon.com/512/3192/3192069.png"

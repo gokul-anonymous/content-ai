@@ -5,19 +5,19 @@ import { CheckCircle, ArrowUpRight } from "lucide-react";
 import { TotalUsageContext } from "@/app/(context)/TotalUsageContext";
 
 function Billing() {
-  const { totalWords } = useContext(TotalUsageContext); // Get total words from context
-  const MAX_WORDS = 10000; // Define the maximum number of words allowed for free
+  const { totalWords } = useContext(TotalUsageContext); 
+  const MAX_WORDS = 10000; 
 
-  // Calculate percentage usage
+
   const percentageUsed = Math.min((totalWords / MAX_WORDS) * 100, 100);
 
   return (
     <div className="min-h-screen p-5 bg-slate-100">
       <h1 className="text-2xl font-semibold text-center mb-8">Billing</h1>
 
-      {/* Billing Info Section */}
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Billing Summary */}
+
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold mb-4">Billing Summary</h2>
           <div className="space-y-4">
@@ -38,7 +38,7 @@ function Billing() {
           </div>
         </div>
 
-        {/* Upgrade to Premium */}
+     
         <div className="bg-gradient-to-br from-purple-500 via-purple-700 to-red-600 p-6 rounded-lg shadow-lg text-white">
           <h2 className="text-xl font-semibold mb-4">Upgrade to Premium</h2>
           <div className="space-y-4">
@@ -63,7 +63,7 @@ function Billing() {
         </div>
       </div>
 
-      {/* Payment History */}
+
       <div className="mt-12 bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-xl font-semibold mb-4">Payment History</h2>
         <div className="space-y-4">
